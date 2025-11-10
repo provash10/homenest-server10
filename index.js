@@ -5,9 +5,6 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 3000;
 
-
-console.log(process.env)
-
 //middleware
 app.use(cors());
 app.use(express.json());
@@ -38,9 +35,22 @@ async function run() {
         const result = await propertyCollection.find().toArray();
         // console.log(result) //checked ok http://localhost:3000/properties
         
-        res.send(result)
-        
+        res.send(result) 
     })
+
+    //insert + insertOne > Post
+    app.post('/properties', async(req,res)=>{
+      const data= req.body
+      // console.log(data) 
+      const result = await propertyCollection.insertOne(data)
+      res.send({
+        success: true,
+        result
+      })
+    })
+
+    
+
 
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
