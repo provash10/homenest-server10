@@ -27,12 +27,25 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     await client.connect();
-    // write here crud
+    // write crud
+    const db = client.db('homenest-db')
+    const propertyCollection = db.collection('properties')
+
+    //find + find one
+    //all property find
+    app.get('/properties', async(req,res)=>{
+
+        const result = await propertyCollection.find().toArray();
+        // console.log(result) //checked ok http://localhost:3000/properties
+        
+        res.send(result)
+        
+    })
 
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
