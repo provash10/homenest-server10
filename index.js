@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 require('dotenv').config()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -36,6 +36,19 @@ async function run() {
         // console.log(result) //checked ok http://localhost:3000/properties
         
         res.send(result) 
+    })
+
+    //single property find
+    app.get('/properties/:id',async(req,res)=>{
+      const {id} = req.params
+      console.log(id) //checked ok http://localhost:3000/properties/691209119d38afb65aaf6dad
+
+      const objectId = new ObjectId(id)
+      const result = await propertyCollection.findOne({_id: objectId})
+      res.send({
+        success: true,
+        result
+      })
     })
 
     //insert + insertOne > Post
