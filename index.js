@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require( "express");
 const cors = require("cors");
 require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
@@ -96,6 +96,15 @@ async function run() {
         success: true,
         result
       })
+    })
+
+    // recent/latest 6-7 data by sort homepage get-find -time.
+
+    app.get('/latest-propertises', async(req,res)=>{
+      const result = await propertyCollection.find().sort({createdAt: -1}).limit(6).toArray()
+
+      res.send(result)
+      console.log(result)
     })
 
     
