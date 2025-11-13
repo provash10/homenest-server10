@@ -23,10 +23,11 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
     // write crud
     const db = client.db('homenest-db')
     const propertyCollection = db.collection('properties')
+    const ratingsCollection = db.collection("ratings");
 
     //find + find one
     //all property find
@@ -35,7 +36,7 @@ async function run() {
         const result = await propertyCollection.find().toArray();
         // console.log(result) //checked ok http://localhost:3000/properties
         
-        res.send(result) 
+        res.send(result);
     })
 
     //single property find
@@ -53,7 +54,8 @@ async function run() {
 
     //insert + insertOne > Post
     app.post('/properties', async(req,res)=>{
-      const data= req.body
+      // const data= req.body
+      const data = { ...req.body, createdAt: new Date().toISOString() };
       // console.log(data) 
       const result = await propertyCollection.insertOne(data)
       res.send({
@@ -103,14 +105,34 @@ async function run() {
     app.get('/latest-propertises', async(req,res)=>{
       const result = await propertyCollection.find().sort({createdAt: -1}).limit(6).toArray()
 
-      res.send(result)
+      res.send(result);
       console.log(result)
     })
 
-    
+    //my-property
+
+    // Ratings///////////////////////
+
+    // get ratings
+app.get("/ratings", async (req, res) => {
+    res.send(await ratingsCollection.find().toArray());
+});
+
+app.get("/my-ratings", async (req, res) => {
+    const { userEmail } = req.query;
+    res.send(await ratingsCollection.find({ reviewerEmail: userEmail }).toArray());
+})
 
 
-    await client.db("admin").command({ ping: 1 });
+   // postratings
+app.post("/ratings", async (req, res) => {
+    res.send(await ratingsCollection.insertOne(req.body));
+});
+
+
+
+
+    // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // await client.close();
