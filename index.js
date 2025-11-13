@@ -83,6 +83,20 @@ async function run() {
   });
     })
 
+    //delete - deleteone-deletemany
+    app.delete('/properties/:id',async(req,res)=>{
+      const {id} = req.params
+      // console.log(id)
+      const objectId = new ObjectId(id)
+      const filter = {_id: objectId}
+
+      const result = await propertyCollection.deleteOne(filter)
+
+      res.send({
+        success: true,
+        result
+      })
+    })
 
     
 
